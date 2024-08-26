@@ -36,6 +36,7 @@ Technologies: GIS, various programming libraries
 
 Contact
 📧 cnicolasdiaz@gmail.com
+
 [twitter]: https://x.com/ndiazOk
 [linkedin]: https://www.linkedin.com/in/ndiazok/
 [QGIS]: https://qgis.org/es/
