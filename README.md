@@ -36,4 +36,14 @@ Technologies: GIS, various programming libraries
 
 Contact
 📧 cnicolasdiaz@gmail.com
-🌐 https://www.linkedin.com/in/ndiazok/
+
+
+[twitter]: https://x.com/ndiazOk
+[linkedin]: https://www.linkedin.com/in/ndiazok/
+[QGIS]: https://qgis.org/es/
+[SAGA]: http://www.saga-gis.org/en/
+[HTML]: https://es.wikipedia.org/wiki/HTML5
+[CSS]: https://es.wikipedia.org/wiki/Hoja_de_estilos_en_cascada/
+[JS]: https://es.wikipedia.org/wiki/JavaScript/
+[GITHUB]: https://github.com/
+[PYTHON]: https://www.python.org/
