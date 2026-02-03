@@ -18,6 +18,7 @@ import {
   CalendarDays,
   FileSpreadsheet,
   Bug,
+  ClipboardCheck,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Badge } from "@/components/ui/badge"
@@ -104,6 +105,11 @@ const financeNavItems = [
     title: "Reparaciones",
     href: "/dashboard/reparaciones",
     icon: Wrench,
+  },
+  {
+    title: "Inspecciones",
+    href: "/dashboard/inspecciones",
+    icon: ClipboardCheck,
   },
 ]
 
