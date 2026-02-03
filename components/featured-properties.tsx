@@ -28,27 +28,29 @@ export function FeaturedProperties() {
   const [loading, setLoading] = useState(true)
 
 useEffect(() => {
+    let mounted = true
     const fetchProperties = async (retries = 2) => {
       try {
         const res = await fetch("/api/public/properties?limit=4")
-        if (res.ok) {
+        if (res.ok && mounted) {
           const data = await res.json()
           setProperties(data.properties || [])
+          setLoading(false)
+        } else if (mounted) {
+          setLoading(false)
         }
       } catch (err) {
-        if (retries > 0) {
-          // Retry after a short delay on connection errors
+        if (retries > 0 && mounted) {
           setTimeout(() => fetchProperties(retries - 1), 1000)
           return
         }
-        console.error("Error fetching featured properties:", err)
-      } finally {
-        if (retries <= 0 || !loading) {
+        if (mounted) {
           setLoading(false)
         }
       }
     }
     fetchProperties()
+    return () => { mounted = false }
   }, [])
 
   const formatPrice = (property: Property) => {
