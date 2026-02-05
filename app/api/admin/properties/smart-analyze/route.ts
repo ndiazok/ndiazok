@@ -18,7 +18,7 @@ const propertyAnalysisSchema = z.object({
 })
 
 const MAX_COLLAGES = 5
-const MAX_COLLAGE_SIZE_KB = 1024
+const MAX_COLLAGE_SIZE_KB = 4096 // 4MB per collage
 
 // Direct call to OpenAI API without SDK/Gateway
 async function callOpenAIVision(apiKey: string, prompt: string, imageContents: { base64: string; mimeType: string }[]) {
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
 
     if (collageBlobs.length === 0) {
       return NextResponse.json(
-        { error: "Los collages son muy grandes. Intentá con menos imágenes." },
+        { error: "No se recibieron imágenes válidas. Intentá con menos imágenes o imágenes más pequeñas." },
         { status: 400 },
       )
     }
