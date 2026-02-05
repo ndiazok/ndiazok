@@ -805,7 +805,7 @@ function PropertyDetailContent({ id }: { id: string }) {
               <div className="flex justify-between items-center">
                 <p className="text-sm text-muted-foreground">Historial de reparaciones</p>
                 <Button size="sm" asChild>
-                  <Link href={`/dashboard/reparaciones/nueva?propiedad=${id}`}>
+                  <Link href={`/dashboard/reparaciones/nuevo?propiedad=${id}`}>
                     <Plus className="mr-2 h-4 w-4" />
                     Nueva reparación
                   </Link>
