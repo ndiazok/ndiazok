@@ -27,7 +27,9 @@ import {
   Copy,
   Check,
   QrCode,
-  MessageSquare, // Added import for MessageSquare
+  MessageSquare,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -159,6 +161,8 @@ function PropertyDetailContent({ id }: { id: string }) {
   const imageInputRef = useRef<HTMLInputElement>(null)
   const docInputRef = useRef<HTMLInputElement>(null)
   const [copiedLink, setCopiedLink] = useState(false)
+  const [sortedImages, setSortedImages] = useState<any[]>([])
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
   
   const micrositeUrl = typeof window !== "undefined" 
     ? `${window.location.origin}/p/${id}` 
@@ -189,6 +193,11 @@ function PropertyDetailContent({ id }: { id: string }) {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Error al cargar propiedad")
       setProperty(data)
+      setSortedImages([...(data.images || [])].sort((a, b) => {
+        if (a.es_principal) return -1
+        if (b.es_principal) return 1
+        return (a.orden || 0) - (b.orden || 0)
+      }))
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido")
     } finally {
@@ -322,6 +331,14 @@ function PropertyDetailContent({ id }: { id: string }) {
     return labels[type] || type
   }
 
+  const goToPrevImage = () => {
+    setCurrentImageIndex((prev) => (prev === 0 ? sortedImages.length - 1 : prev - 1))
+  }
+  const goToNextImage = () => {
+    setCurrentImageIndex((prev) => (prev === sortedImages.length - 1 ? 0 : prev + 1))
+  }
+  const activeContract = property?.contracts?.find((c) => c.estado === "activo")
+
   useEffect(() => {
     if (id) {
       fetchProperty()
@@ -348,8 +365,7 @@ function PropertyDetailContent({ id }: { id: string }) {
     )
   }
 
-  const coverImage = property.images?.find((img) => img.es_principal) || property.images?.[0]
-  const activeContract = property.contracts?.find((c) => c.estado === "activo")
+  const coverImage = sortedImages.find((img) => img.es_principal)
 
   return (
     <div className="space-y-6">
@@ -467,14 +483,64 @@ function PropertyDetailContent({ id }: { id: string }) {
           {/* Cover image and badges */}
           <Card>
             <CardContent className="p-0">
-              {coverImage ? (
-                <img
-                  src={coverImage.url || "/placeholder.svg"}
-                  alt={coverImage.alt_text || property.direccion}
-                  className="w-full h-64 object-cover rounded-t-lg"
-                />
+              {sortedImages.length > 0 ? (
+                <div className="relative group">
+                  <img
+                    src={sortedImages[currentImageIndex]?.url || "/placeholder.svg"}
+                    alt={sortedImages[currentImageIndex]?.titulo || property.direccion}
+                    className="w-full h-80 object-cover rounded-t-lg"
+                  />
+                  {/* Navigation arrows */}
+                  {sortedImages.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={goToPrevImage}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                        aria-label="Foto anterior"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={goToNextImage}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                        aria-label="Foto siguiente"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+                    </>
+                  )}
+                  {/* Counter + thumbnails */}
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/60 text-white text-xs px-3 py-1 rounded-full">
+                    {currentImageIndex + 1} / {sortedImages.length}
+                  </div>
+                  {/* Thumbnail strip */}
+                  {sortedImages.length > 1 && (
+                    <div className="flex gap-1 p-2 overflow-x-auto">
+                      {sortedImages.map((img, idx) => (
+                        <button
+                          key={img.id}
+                          type="button"
+                          onClick={() => setCurrentImageIndex(idx)}
+                          className={`shrink-0 w-16 h-12 rounded overflow-hidden border-2 transition-all ${
+                            idx === currentImageIndex
+                              ? "border-primary ring-1 ring-primary"
+                              : "border-transparent opacity-70 hover:opacity-100"
+                          }`}
+                        >
+                          <img
+                            src={img.url || "/placeholder.svg"}
+                            alt={img.titulo || `Foto ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ) : (
-                <div className="w-full h-64 bg-muted flex items-center justify-center rounded-t-lg">
+                <div className="w-full h-80 bg-muted flex items-center justify-center rounded-t-lg">
                   <Building2 className="h-16 w-16 text-muted-foreground" />
                 </div>
               )}
